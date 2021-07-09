@@ -1,0 +1,12 @@
+﻿  Final.cpp
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\include\shader_m.h(44): warning C4101: 'e': variable local sin referencia
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\include\modelanim.h(104): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\include\modelanim.h(520): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\final.cpp(708): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\final.cpp(709): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\final.cpp(713): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\final.cpp(714): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\final.cpp(716): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\final.cpp(717): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\liam\desktop\proyecto final computacion grafica\codigo final\codigo final\final.cpp(725): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+  Codigo Final.vcxproj -> C:\Users\LIAM\Desktop\Proyecto Final Computacion Grafica\Codigo Final\Debug\Codigo Final.exe
