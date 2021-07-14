@@ -322,7 +322,7 @@ int main()
 
 	// load models
 	// -----------
-	Model piso("resources/objects/piso/piso.obj");
+	Model piso("resources/objects/piso_new/piso_new.obj");
 	Model botaDer("resources/objects/Personaje/bota.obj");
 	Model piernaDer("resources/objects/Personaje/piernader.obj");
 	Model piernaIzq("resources/objects/Personaje/piernader.obj");
@@ -333,8 +333,8 @@ int main()
 	Model carro("resources/objects/lambo/carroceria.obj");
 	Model llanta("resources/objects/lambo/Wheel.obj");
 	Model casaVieja("resources/objects/casa/OldHouse.obj");
-	//Model cubo("resources/objects/cubo/cube02.obj");
-	Model casaDoll("resources/objects/casa/DollHouse.obj");
+	Model modelcasa("resources/objects/casa01/Modelo_Casa.obj");
+	//Model casaDoll("resources/objects/casa/DollHouse.obj");
 
 	ModelAnim personajeCaminando("resources/objects/Caminando/Caminando.dae");
 	personajeCaminando.initShaders(animShader.ID);
@@ -463,10 +463,11 @@ int main()
 		staticShader.setMat4("projection", projection);
 		staticShader.setMat4("view", view);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(250.0f, 0.0f, -10.0f));
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(600.0f, 0.0f, -50.0f));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 1.3f));
 		staticShader.setMat4("model", model);
-		casaDoll.Draw(staticShader);
+		modelcasa.Draw(staticShader);
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
