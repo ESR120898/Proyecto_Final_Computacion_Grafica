@@ -93,13 +93,17 @@ float	posX = 0.0f,
 		posZ = 0.0f,
 		rotRodIzq = 0.0f,
 		giroMonito = 0.0f,
-		movBrazoIzq = 0.0f;
+		movBrazoIzq = 0.0f,
+		subeybaja01 = 0.0f,
+		subeybaja02 = 0.0f;
 float	incX = 0.0f,
 		incY = 0.0f,
 		incZ = 0.0f,
 		rotInc = 0.0f,
 		giroMonitoInc = 0.0f,
-		movBrazoIzqInc = 0.0f;
+		movBrazoIzqInc = 0.0f,
+		subeybaja01Inc = 0.0f,
+		subeybaja02Inc = 0.0f;
 
 #define MAX_FRAMES 9
 int i_max_steps = 60;
@@ -113,7 +117,8 @@ typedef struct _frame
 	float rotRodIzq;
 	float giroMonito;
 	float movBrazoIzq;
-
+	float subeybaja01;
+	float subeybaja02;
 }FRAME;
 
 FRAME KeyFrame[MAX_FRAMES];
@@ -133,6 +138,8 @@ void saveFrame(void)
 	KeyFrame[FrameIndex].rotRodIzq = rotRodIzq;
 	KeyFrame[FrameIndex].giroMonito = giroMonito;
 	KeyFrame[FrameIndex].movBrazoIzq = movBrazoIzq;
+	KeyFrame[FrameIndex].subeybaja01 = subeybaja01;
+	KeyFrame[FrameIndex].subeybaja02 = subeybaja02;
 
 	FrameIndex++;
 }
@@ -145,8 +152,9 @@ void resetElements(void)
 
 	rotRodIzq = KeyFrame[0].rotRodIzq;
 	giroMonito = KeyFrame[0].giroMonito;
-
 	movBrazoIzq = KeyFrame[0].movBrazoIzq;
+	subeybaja01 = KeyFrame[0].subeybaja01;
+	subeybaja02 = KeyFrame[0].subeybaja02;
 }
 
 void interpolation(void)
@@ -158,7 +166,8 @@ void interpolation(void)
 	rotInc = (KeyFrame[playIndex + 1].rotRodIzq - KeyFrame[playIndex].rotRodIzq) / i_max_steps;
 	giroMonitoInc = (KeyFrame[playIndex + 1].giroMonito - KeyFrame[playIndex].giroMonito) / i_max_steps;
 	movBrazoIzqInc = (KeyFrame[playIndex + 1].movBrazoIzq - KeyFrame[playIndex].movBrazoIzq) / i_max_steps;
-
+	subeybaja01Inc = (KeyFrame[playIndex + 1].subeybaja01 - KeyFrame[playIndex].subeybaja01) / i_max_steps;
+	subeybaja02Inc = (KeyFrame[playIndex + 1].subeybaja02 - KeyFrame[playIndex].subeybaja02) / i_max_steps;
 }
 
 void animate(void)
@@ -191,8 +200,9 @@ void animate(void)
 
 			rotRodIzq += rotInc;
 			giroMonito += giroMonitoInc;
-
 			movBrazoIzq += movBrazoIzqInc;
+			subeybaja01 += subeybaja01Inc;
+			subeybaja02 += subeybaja02Inc;
 
 			i_curr_steps++;
 		}
@@ -280,7 +290,7 @@ int main()
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, my_input);
-	SoundEngine->play2D("Musica/Muerte.mp3", true);
+	//SoundEngine->play2D("Musica/Muerte.mp3", true);
 
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -332,27 +342,20 @@ int main()
 	Model cabeza("resources/objects/Personaje/cabeza.obj");
 	Model carro("resources/objects/lambo/carroceria.obj");
 	Model llanta("resources/objects/lambo/Wheel.obj");
-	Model casaVieja("resources/objects/casa/OldHouse.obj");
 	Model modelcasa("resources/objects/casa01/Modelo_Casa.obj");
-	//Model casaDoll("resources/objects/casa/DollHouse.obj");
-
-	ModelAnim personajeCaminando("resources/objects/Caminando/Caminando.dae");
-	personajeCaminando.initShaders(animShader.ID);
-
-	/*ModelAnim animacionPersonaje("resources/objects/Personaje1/PersonajeBrazo.dae");
-	animacionPersonaje.initShaders(animShader.ID);
-
-	ModelAnim ninja("resources/objects/ZombieWalk/ZombieWalk.dae");
-	ninja.initShaders(animShader.ID);*/
+	Model ModelMedidor("resources/objects/Medidor/medidorluz-1.obj");
+	Model SubeyBaja01("resources/objects/subeybaja/suyba01.obj");
+	Model SubeyBaja02("resources/objects/subeybaja/suyba02.obj");
+	Model SubeyBaja03("resources/objects/subeybaja/suybacentro.obj");
+	Model shark01("resources/objects/tiburon/cabeza.obj");
+	Model shark02("resources/objects/tiburon/cola.obj");
+	Model pool("resources/objects/pool/alberca.obj");
 
 	//Inicialización de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
 	{
-		KeyFrame[i].posX = 0;
-		KeyFrame[i].posY = 0;
-		KeyFrame[i].posZ = 0;
-		KeyFrame[i].rotRodIzq = 0;
-		KeyFrame[i].giroMonito = 0;
+		KeyFrame[i].subeybaja01 = 0;
+		KeyFrame[i].subeybaja02 = 0;
 	}
 
 	// draw in wireframe
@@ -435,27 +438,6 @@ int main()
 		animShader.setVec3("light.direction", lightDirection);
 		animShader.setVec3("viewPos", camera.Position);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(60.0f, 0.0f, 70.0f));
-		model = glm::scale(model, glm::vec3(0.05f)); //Es lo mismo que colocar vec3(0.05f,0.05f,0.05f);
-		animShader.setMat4("model", model);
-		personajeCaminando.Draw(animShader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-40.3f, 1.75f, 0.3f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(1.2f));	// it's a bit too big for our scene, so scale it down
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		animShader.setMat4("model", model);
-		//animacionPersonaje.Draw(animShader);
-
-		// -------------------------------------------------------------------------------------------------------------------------
-		// Segundo Personaje Animacion
-		// -------------------------------------------------------------------------------------------------------------------------
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(40.3f, 1.75f, 0.3f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		animShader.setMat4("model", model);
-		//ninja.Draw(animShader);
-
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -463,26 +445,145 @@ int main()
 		staticShader.setMat4("projection", projection);
 		staticShader.setMat4("view", view);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(600.0f, 0.0f, -50.0f));
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 1.3f));
-		staticShader.setMat4("model", model);
-		modelcasa.Draw(staticShader);
-
+		//piso
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.2f));
 		staticShader.setMat4("model", model);
 		piso.Draw(staticShader);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -70.0f));
-		model = glm::scale(model, glm::vec3(5.0f));
+		/*/tiburon 
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
 		staticShader.setMat4("model", model);
-		casaVieja.Draw(staticShader);
+		shark01.Draw(staticShader);
 
-		// -------------------------------------------------------------------------------------------------------------------------
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		shark02.Draw(staticShader);
+
+		//Alberca
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(20.0f, 20.0f, 20.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		pool.Draw(staticShader);
+		*/
+		
+		//casa1 (primera empezando por la alberca)
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(595.0f, 0.0f, -51.3f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.93f, 2.5f, 1.3f));
+		staticShader.setMat4("model", model);
+		modelcasa.Draw(staticShader);
+		
+		/*//casa2 (segunda empezando por la alberca)
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(595.0f, 0.0f, 133.0f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.93f, 2.5f, 1.3f));
+		staticShader.setMat4("model", model);
+		modelcasa.Draw(staticShader);
+
+		//casa3 (tercera empezando por la alberca)
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(595.0f, 0.0f, 314.0f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.93f, 2.5f, 1.3f));
+		staticShader.setMat4("model", model);
+		modelcasa.Draw(staticShader);
+
+		//casa4 (primera empezando por el area de juegos)
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-271.0f, 0.0f, -46.0f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.93f, 2.5f, 1.3f));
+		staticShader.setMat4("model", model);
+		modelcasa.Draw(staticShader);
+
+		//casa5 (segunda empezando por el area de juegos)
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-271.0f, 0.0f, 129.0f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.93f, 2.5f, 1.3f));
+		staticShader.setMat4("model", model);
+		modelcasa.Draw(staticShader);
+
+		//casa6 (tercera empezando por el area de juegos)
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-271.0f, 0.0f, 314.0f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.93f, 2.5f, 1.3f));
+		staticShader.setMat4("model", model);
+		modelcasa.Draw(staticShader);
+
+		//MedidorLuz casa01
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3( 420.0f, 0.0f, -51.3f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		ModelMedidor.Draw(staticShader);
+
+		//MedidorLuz casa02
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(420.0f, 0.0f, 133.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		ModelMedidor.Draw(staticShader);
+
+		//MedidorLuz casa03
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(420.0f, 0.0f, 314.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		ModelMedidor.Draw(staticShader);
+
+		//MedidorLuz casa04
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-120.0f, 0.0f, -54.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		ModelMedidor.Draw(staticShader);
+
+		//MedidorLuz casa05
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-120.0f, 0.0f, 129.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		ModelMedidor.Draw(staticShader);
+
+		//MedidorLuz casa06
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-120.0f, 0.0f, 314.0f));
+		model = glm::scale(model, glm::vec3(0.35f));
+		staticShader.setMat4("model", model);
+		ModelMedidor.Draw(staticShader);
+		*/
+
+		//Subeybaja 
+
+		/*model = glm::translate(tmp, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-170.0, 0.0f, -320.0f));
+		model = glm::scale(model, glm::vec3(0.5f));
+		staticShader.setMat4("model", model);
+		SubeyBaja03.Draw(staticShader);
+
+		model = glm::translate(tmp, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-170.0f, 0.0f, -320.0f));
+		model = glm::rotate(model, glm::radians(subeybaja01), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.5f));
+		staticShader.setMat4("model", model);
+		SubeyBaja01.Draw(staticShader);
+
+		model = glm::translate(tmp, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(-170.0f, 0.0f, -320.0f));
+		model = glm::rotate(model, glm::radians(subeybaja02), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.5f));
+		staticShader.setMat4("model", model);
+		SubeyBaja02.Draw(staticShader);
+		*/
+
+		//-------------------------------------------------------------------------------------------------------------------------
 		// Carro
-		// -------------------------------------------------------------------------------------------------------------------------
+		/* -------------------------------------------------------------------------------------------------------------------------
 		model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::translate(model, glm::vec3(15.0f + movAuto_x, -1.0f + movAuto_y, movAuto_z));
 		tmp = model = glm::rotate(model, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -515,8 +616,9 @@ int main()
 		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 		staticShader.setMat4("model", model);
 		llanta.Draw(staticShader);	//Izq trase
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
-		// Personaje
+		/* Personaje
 		// -------------------------------------------------------------------------------------------------------------------------
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 		model = glm::translate(model, glm::vec3(posX, posY, posZ));
@@ -567,16 +669,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 2.5f, 0));
 		staticShader.setMat4("model", model);
 		cabeza.Draw(staticShader);
-		// -------------------------------------------------------------------------------------------------------------------------
-		// Caja Transparente --- Siguiente Práctica
-		// -------------------------------------------------------------------------------------------------------------------------
-		/*glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -70.0f));
-		model = glm::scale(model, glm::vec3(5.0f));
-		staticShader.setMat4("model", model);
-		cubo.Draw(staticShader);
-		glEnable(GL_BLEND);*/
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Termina Escenario
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -642,6 +735,15 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		movBrazoIzq += 3.0f;
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
 		movBrazoIzq -= 3.0f;
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+		subeybaja01--;
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+		subeybaja01++;
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+		subeybaja02--;
+	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+		subeybaja02++;
+
 
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 	{

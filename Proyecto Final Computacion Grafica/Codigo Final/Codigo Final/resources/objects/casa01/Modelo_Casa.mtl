@@ -40,8 +40,8 @@ newmtl 04___Default
 	Kd 0.5882 0.5882 0.5882
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka ventana.png
-	map_Kd ventana.png
+	map_Ka window.png
+	map_Kd window.png
 
 newmtl 08___Default
 	Ns 10.0000
@@ -82,8 +82,8 @@ newmtl 10___Default
 	Kd 0.5882 0.5882 0.5882
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka Door.jpg
-	map_Kd Door.jpg
+	map_Ka PuertaArriba.png
+	map_Kd PuertaArriba.png
 
 newmtl 09___Default
 	Ns 10.0000
@@ -96,6 +96,8 @@ newmtl 09___Default
 	Kd 0.0431 0.0314 0.0275
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
+	map_Ka brown-glass-mosaic-kitchen-backsplash-wall.jpg
+	map_Kd brown-glass-mosaic-kitchen-backsplash-wall.jpg
 
 newmtl 11___Default
 	Ns 10.0000
