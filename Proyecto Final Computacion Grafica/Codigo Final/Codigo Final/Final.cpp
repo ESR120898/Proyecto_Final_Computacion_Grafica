@@ -136,8 +136,19 @@ incrotCabeza = 0.0f,
 incrotbrazoIzq = 0.0f,
 incrotbrazoDer = 0.0f;
 
-//Variables para el dibujo y animacion del tiburon
+//Variables para el dibujo y animacion de la pelota
+float	posX_ball = 0.0f,
+posY_ball = 0.0f,
+posZ_ball = 0.0f,
+rotball = 0.0f;
 
+float	posX_ball_INC = 0.0f,
+posY_ball_INC = 0.0f,
+posZ_ball_INC = 0.0f,
+rotball_INC = 0.0f;
+
+
+//Variables para el dibujo y animacion del tiburon
 float	mov_tibu_x = 0.0f,
 mov_tibu_y = 0.0f,
 mov_tibu_z = 0.0f,
@@ -151,7 +162,6 @@ cabezatibuInc = 0.0f,
 colatibuInc = 0.0f;
 
 //Variables para el dibujo y animacion del sube y baja
-
 float	mov_syb_x = 0.0f,
 mov_syb_y = 0.0f,
 mov_syb_z = 0.0f,
@@ -281,7 +291,7 @@ typedef struct _frame3
 }FRAME3;
 
 FRAME3 KeyFrame3[MAX_FRAMES3];
-int FrameIndex3 = 10;			//introducir datos
+int FrameIndex3 = 20;			//introducir datos
 bool play3 = false;
 int playIndex3 = 0;
 
@@ -342,6 +352,44 @@ void interpolation4(void)
 	subeybaja02Inc = (KeyFrame4[playIndex4 + 1].subeybaja02 - KeyFrame4[playIndex4].subeybaja02) / i_max_steps4;
 
 }
+
+// Arreglos para la animacion de la pelota
+
+#define MAX_FRAMES5 20
+int i_max_steps5 = 60;
+int i_curr_steps5 = 0;
+typedef struct _frame5
+{
+	//Variables para GUARDAR Key Frames
+	float posX_ball = 0.0f;
+	float posY_ball = 0.0f;
+	float posZ_ball = 0.0f;
+	float rotball = 0.0f;
+
+}FRAME5;
+
+FRAME5 KeyFrame5[MAX_FRAMES5];
+int FrameIndex5 = 20;			//introducir datos
+bool play5 = false;
+int playIndex5 = 0;
+
+void resetElements5(void)
+{
+	posX_ball = KeyFrame5[0].posX_ball;
+	posY_ball = KeyFrame5[0].posY_ball;
+	posZ_ball = KeyFrame5[0].posZ_ball;
+	rotball = KeyFrame5[0].rotball;
+}
+
+void interpolation5(void)
+{
+	posX_ball_INC = (KeyFrame5[playIndex5 + 1].posX_ball - KeyFrame5[playIndex5].posX_ball) / i_max_steps5;
+	posY_ball_INC = (KeyFrame5[playIndex5 + 1].posY_ball - KeyFrame5[playIndex5].posY_ball) / i_max_steps5;
+	posZ_ball_INC = (KeyFrame5[playIndex5 + 1].posZ_ball - KeyFrame5[playIndex5].posZ_ball) / i_max_steps5;
+	rotball_INC = (KeyFrame5[playIndex5 + 1].rotball- KeyFrame5[playIndex5].rotball) / i_max_steps5;
+	
+}
+
 
 void animate(void)
 {
@@ -581,6 +629,36 @@ void animate(void)
 			i_curr_steps4++;
 		}
 	}
+
+	if (play5)
+	{
+		if (i_curr_steps5 >= i_max_steps5) //end of animation between frames?
+		{
+			playIndex5++;
+			if (playIndex5 > FrameIndex5 - 2)	//end of total animation?
+			{
+				std::cout << "Animation ended" << std::endl;
+				//printf("termina anim\n");
+				playIndex5 = 0;
+				play5 = false;
+			}
+			else //Next frame interpolations
+			{
+				i_curr_steps5 = 0; //Reset counter
+								  //Interpolation
+				interpolation5();
+			}
+		}
+		else
+		{
+			//Draw animation
+			posX_ball += posX_ball_INC;
+			posY_ball += posY_ball_INC;
+			posZ_ball += posZ_ball_INC;
+			rotball += rotball_INC;
+			i_curr_steps5++;
+		}
+	}
 }
 
 void getResolution()
@@ -593,7 +671,7 @@ void getResolution()
 
 int main()
 {
-	Fondo->play2D("Musica/Fondo.mp3", true);
+	//Fondo->play2D("Musica/Fondo.mp3", true);
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -690,10 +768,12 @@ int main()
 	Model ModelMedidor("resources/objects/Medidor/medidorluz-1.obj");
 	Model SubeyBaja01("resources/objects/subeybaja/subeybaja_01.obj");
 	Model SubeyBaja02("resources/objects/subeybaja/subeybaja_02.obj");
-	Model SubeyBaja03("resources/objects/subeybaja/subeybaja_centro.obj"); 
-	Model shark01("resources/objects/tiburon/cabeza.obj");  
-	Model shark02("resources/objects/tiburon/cola.obj");  
-	Model pool("resources/objects/pool/pool01.obj"); 
+	Model SubeyBaja03("resources/objects/subeybaja/subeybaja_centro.obj");
+	Model shark01("resources/objects/tiburon/cabeza.obj");
+	Model shark02("resources/objects/tiburon/cola.obj");
+	Model pool("resources/objects/pool/pool01.obj");
+	Model perro("resources/objects/perro/Dog.obj");
+	Model ball("resources/objects/pelota/pelota.obj");
 
 	ModelAnim personajeCaminando("resources/objects/Caminando/Caminando.dae");
 	personajeCaminando.initShaders(animShader.ID);
@@ -704,372 +784,374 @@ int main()
 	ModelAnim Inge("resources/objects/Inge/Inge.dae");
 	Inge.initShaders(animShader.ID);
 
-	//Keyframes para la animacion del aguila
+	/*
+		//Keyframes para la animacion del aguila
 
-	KeyFrame[0].posX = 0;
-	KeyFrame[0].posY = 0;
-	KeyFrame[0].posZ = 0;
-	KeyFrame[0].giro_aguila = 0;
-	KeyFrame[0].alaIzq = 0;
-	KeyFrame[0].alaDer = 0;
+		KeyFrame[0].posX = 0;
+		KeyFrame[0].posY = 0;
+		KeyFrame[0].posZ = 0;
+		KeyFrame[0].giro_aguila = 0;
+		KeyFrame[0].alaIzq = 0;
+		KeyFrame[0].alaDer = 0;
 
-	KeyFrame[1].posX = 0.0f;
-	KeyFrame[1].posY = 40.0f;
-	KeyFrame[1].posZ = 60.0f;
-	KeyFrame[1].giro_aguila = 0.0f;
-	KeyFrame[1].alaIzq = -30.0f;
-	KeyFrame[1].alaDer = 30.0f;
+		KeyFrame[1].posX = 0.0f;
+		KeyFrame[1].posY = 40.0f;
+		KeyFrame[1].posZ = 60.0f;
+		KeyFrame[1].giro_aguila = 0.0f;
+		KeyFrame[1].alaIzq = -30.0f;
+		KeyFrame[1].alaDer = 30.0f;
 
-	KeyFrame[2].posX = 0;
-	KeyFrame[2].posY = 80.0f;
-	KeyFrame[2].posZ = 120.0f;
-	KeyFrame[2].giro_aguila = 0.0f;
-	KeyFrame[2].alaIzq = 30.0f;
-	KeyFrame[2].alaDer = -30.0f;
+		KeyFrame[2].posX = 0;
+		KeyFrame[2].posY = 80.0f;
+		KeyFrame[2].posZ = 120.0f;
+		KeyFrame[2].giro_aguila = 0.0f;
+		KeyFrame[2].alaIzq = 30.0f;
+		KeyFrame[2].alaDer = -30.0f;
 
-	KeyFrame[3].posX = 0;
-	KeyFrame[3].posY = 120.0f;
-	KeyFrame[3].posZ = 180.0f;
-	KeyFrame[3].giro_aguila = 0.0f;
-	KeyFrame[3].alaIzq = -30.0f;
-	KeyFrame[3].alaDer = 30.0f;
+		KeyFrame[3].posX = 0;
+		KeyFrame[3].posY = 120.0f;
+		KeyFrame[3].posZ = 180.0f;
+		KeyFrame[3].giro_aguila = 0.0f;
+		KeyFrame[3].alaIzq = -30.0f;
+		KeyFrame[3].alaDer = 30.0f;
 
-	KeyFrame[4].posX = 0;
-	KeyFrame[4].posY = 120.0f;
-	KeyFrame[4].posZ = 240.0f;
-	KeyFrame[4].giro_aguila = 0.0f;
-	KeyFrame[4].alaIzq = 30.0f;
-	KeyFrame[4].alaDer = -30.0f;
+		KeyFrame[4].posX = 0;
+		KeyFrame[4].posY = 120.0f;
+		KeyFrame[4].posZ = 240.0f;
+		KeyFrame[4].giro_aguila = 0.0f;
+		KeyFrame[4].alaIzq = 30.0f;
+		KeyFrame[4].alaDer = -30.0f;
 
-	KeyFrame[5].posX = 0;
-	KeyFrame[5].posY = 120.0f;
-	KeyFrame[5].posZ = 300.0f;
-	KeyFrame[5].giro_aguila = 0.0f;
-	KeyFrame[5].alaIzq = -30.0f;
-	KeyFrame[5].alaDer = 30.0f;
+		KeyFrame[5].posX = 0;
+		KeyFrame[5].posY = 120.0f;
+		KeyFrame[5].posZ = 300.0f;
+		KeyFrame[5].giro_aguila = 0.0f;
+		KeyFrame[5].alaIzq = -30.0f;
+		KeyFrame[5].alaDer = 30.0f;
 
-	KeyFrame[6].posX = 0;
-	KeyFrame[6].posY = 120.0f;
-	KeyFrame[6].posZ = 360.0f;
-	KeyFrame[6].giro_aguila = 0.0f;
-	KeyFrame[6].alaIzq = 30.0f;
-	KeyFrame[6].alaDer = -30.0f;
+		KeyFrame[6].posX = 0;
+		KeyFrame[6].posY = 120.0f;
+		KeyFrame[6].posZ = 360.0f;
+		KeyFrame[6].giro_aguila = 0.0f;
+		KeyFrame[6].alaIzq = 30.0f;
+		KeyFrame[6].alaDer = -30.0f;
 
-	KeyFrame[7].posX = 0;
-	KeyFrame[7].posY = 120.0f;
-	KeyFrame[7].posZ = 420.0f;
-	KeyFrame[7].giro_aguila = 0.0f;
-	KeyFrame[7].alaIzq = -30.0f;
-	KeyFrame[7].alaDer = 30.0f;
+		KeyFrame[7].posX = 0;
+		KeyFrame[7].posY = 120.0f;
+		KeyFrame[7].posZ = 420.0f;
+		KeyFrame[7].giro_aguila = 0.0f;
+		KeyFrame[7].alaIzq = -30.0f;
+		KeyFrame[7].alaDer = 30.0f;
 
-	KeyFrame[8].posX = 55.0f;
-	KeyFrame[8].posY = 120.0f;
-	KeyFrame[8].posZ = 450.0f;
-	KeyFrame[8].giro_aguila = 90.0f;
-	KeyFrame[8].alaIzq = 30.0f;
-	KeyFrame[8].alaDer = -30.0f;
+		KeyFrame[8].posX = 55.0f;
+		KeyFrame[8].posY = 120.0f;
+		KeyFrame[8].posZ = 450.0f;
+		KeyFrame[8].giro_aguila = 90.0f;
+		KeyFrame[8].alaIzq = 30.0f;
+		KeyFrame[8].alaDer = -30.0f;
 
-	KeyFrame[9].posX = 110.0f;
-	KeyFrame[9].posY = 120.0f;
-	KeyFrame[9].posZ = 420.0f;
-	KeyFrame[9].giro_aguila = 180.0f;
-	KeyFrame[9].alaIzq = -30.0f;
-	KeyFrame[9].alaDer = 30.0f;
+		KeyFrame[9].posX = 110.0f;
+		KeyFrame[9].posY = 120.0f;
+		KeyFrame[9].posZ = 420.0f;
+		KeyFrame[9].giro_aguila = 180.0f;
+		KeyFrame[9].alaIzq = -30.0f;
+		KeyFrame[9].alaDer = 30.0f;
 
-	KeyFrame[10].posX = 110.0f;
-	KeyFrame[10].posY = 120.0f;
-	KeyFrame[10].posZ = 360.0f;
-	KeyFrame[10].giro_aguila = 180.0f;
-	KeyFrame[10].alaIzq = 30.0f;
-	KeyFrame[10].alaDer = -30.0f;
+		KeyFrame[10].posX = 110.0f;
+		KeyFrame[10].posY = 120.0f;
+		KeyFrame[10].posZ = 360.0f;
+		KeyFrame[10].giro_aguila = 180.0f;
+		KeyFrame[10].alaIzq = 30.0f;
+		KeyFrame[10].alaDer = -30.0f;
 
-	KeyFrame[11].posX = 110.0f;
-	KeyFrame[11].posY = 120.0f;
-	KeyFrame[11].posZ = 300.0f;
-	KeyFrame[11].giro_aguila = 180.0f;
-	KeyFrame[11].alaIzq = -30.0f;
-	KeyFrame[11].alaDer = 30.0f;
+		KeyFrame[11].posX = 110.0f;
+		KeyFrame[11].posY = 120.0f;
+		KeyFrame[11].posZ = 300.0f;
+		KeyFrame[11].giro_aguila = 180.0f;
+		KeyFrame[11].alaIzq = -30.0f;
+		KeyFrame[11].alaDer = 30.0f;
 
-	KeyFrame[12].posX = 110.0f;
-	KeyFrame[12].posY = 120.0f;
-	KeyFrame[12].posZ = 240.0f;
-	KeyFrame[12].giro_aguila = 180.0f;
-	KeyFrame[12].alaIzq = 30.0f;
-	KeyFrame[12].alaDer = -30.0f;
+		KeyFrame[12].posX = 110.0f;
+		KeyFrame[12].posY = 120.0f;
+		KeyFrame[12].posZ = 240.0f;
+		KeyFrame[12].giro_aguila = 180.0f;
+		KeyFrame[12].alaIzq = 30.0f;
+		KeyFrame[12].alaDer = -30.0f;
 
-	KeyFrame[13].posX = 110.0f;
-	KeyFrame[13].posY = 110.0f;
-	KeyFrame[13].posZ = 180.0f;
-	KeyFrame[13].giro_aguila = 180.0f;
-	KeyFrame[13].alaIzq = -30.0f;
-	KeyFrame[13].alaDer = 30.0f;
+		KeyFrame[13].posX = 110.0f;
+		KeyFrame[13].posY = 110.0f;
+		KeyFrame[13].posZ = 180.0f;
+		KeyFrame[13].giro_aguila = 180.0f;
+		KeyFrame[13].alaIzq = -30.0f;
+		KeyFrame[13].alaDer = 30.0f;
 
-	KeyFrame[14].posX = 110.0f;
-	KeyFrame[14].posY = 100.0f;
-	KeyFrame[14].posZ = 120.0f;
-	KeyFrame[14].giro_aguila = 180.0f;
-	KeyFrame[14].alaIzq = 30.0f;
-	KeyFrame[14].alaDer = -30.0f;
+		KeyFrame[14].posX = 110.0f;
+		KeyFrame[14].posY = 100.0f;
+		KeyFrame[14].posZ = 120.0f;
+		KeyFrame[14].giro_aguila = 180.0f;
+		KeyFrame[14].alaIzq = 30.0f;
+		KeyFrame[14].alaDer = -30.0f;
 
-	KeyFrame[15].posX = 110.0f;
-	KeyFrame[15].posY = 90.0f;
-	KeyFrame[15].posZ = 60.0f;
-	KeyFrame[15].giro_aguila = 180.0f;
-	KeyFrame[15].alaIzq = -30.0f;
-	KeyFrame[15].alaDer = 30.0f;
+		KeyFrame[15].posX = 110.0f;
+		KeyFrame[15].posY = 90.0f;
+		KeyFrame[15].posZ = 60.0f;
+		KeyFrame[15].giro_aguila = 180.0f;
+		KeyFrame[15].alaIzq = -30.0f;
+		KeyFrame[15].alaDer = 30.0f;
 
-	KeyFrame[16].posX = 110.0f;
-	KeyFrame[16].posY = 70.0f;
-	KeyFrame[16].posZ = 5.0f;
-	KeyFrame[16].giro_aguila = 180.0f;
-	KeyFrame[16].alaIzq = 0.0f;
-	KeyFrame[16].alaDer = 0.0f;
+		KeyFrame[16].posX = 110.0f;
+		KeyFrame[16].posY = 70.0f;
+		KeyFrame[16].posZ = 5.0f;
+		KeyFrame[16].giro_aguila = 180.0f;
+		KeyFrame[16].alaIzq = 0.0f;
+		KeyFrame[16].alaDer = 0.0f;
 
-//Keyframes para la animacion de la persona caminando
+	//Keyframes para la animacion de la persona caminando
 
-	KeyFrame2[0].posX1 = 0;
-	KeyFrame2[0].posY1 = 0;
-	KeyFrame2[0].posZ1 = 0;
-	KeyFrame2[0].rotpiernaIzq = 0;
-	KeyFrame2[0].rotpiernaDer = 0;
-	KeyFrame2[0].rotTorso = 0;
-	KeyFrame2[0].rotBolsa = 0;
-	KeyFrame2[0].rotCabeza = 0;
-	KeyFrame2[0].rotbrazoIzq = 0;
-	KeyFrame2[0].rotbrazoDer = 0;
+		KeyFrame2[0].posX1 = 0;
+		KeyFrame2[0].posY1 = 0;
+		KeyFrame2[0].posZ1 = 0;
+		KeyFrame2[0].rotpiernaIzq = 0;
+		KeyFrame2[0].rotpiernaDer = 0;
+		KeyFrame2[0].rotTorso = 0;
+		KeyFrame2[0].rotBolsa = 0;
+		KeyFrame2[0].rotCabeza = 0;
+		KeyFrame2[0].rotbrazoIzq = 0;
+		KeyFrame2[0].rotbrazoDer = 0;
 
-	KeyFrame2[1].posX1 = 50.0f;
-	KeyFrame2[1].posY1 = 0;
-	KeyFrame2[1].posZ1 = 0;
-	KeyFrame2[1].rotpiernaIzq = 30.0f;
-	KeyFrame2[1].rotpiernaDer = -30.0f;
-	KeyFrame2[1].rotTorso = 0;
-	KeyFrame2[1].rotBolsa = 10.0f;
-	KeyFrame2[1].rotCabeza = 0.0f;
-	KeyFrame2[1].rotbrazoIzq = -30.0f;
-	KeyFrame2[1].rotbrazoDer = 30.0f;
+		KeyFrame2[1].posX1 = 50.0f;
+		KeyFrame2[1].posY1 = 0;
+		KeyFrame2[1].posZ1 = 0;
+		KeyFrame2[1].rotpiernaIzq = 30.0f;
+		KeyFrame2[1].rotpiernaDer = -30.0f;
+		KeyFrame2[1].rotTorso = 0;
+		KeyFrame2[1].rotBolsa = 10.0f;
+		KeyFrame2[1].rotCabeza = 0.0f;
+		KeyFrame2[1].rotbrazoIzq = -30.0f;
+		KeyFrame2[1].rotbrazoDer = 30.0f;
 
-	KeyFrame2[2].posX1 = 100.0f;
-	KeyFrame2[2].posY1 = 0;
-	KeyFrame2[2].posZ1 = 0;
-	KeyFrame2[2].rotpiernaIzq = -30.0f;
-	KeyFrame2[2].rotpiernaDer = 30.0f;
-	KeyFrame2[2].rotTorso = 0;
-	KeyFrame2[2].rotBolsa = 10.0f;
-	KeyFrame2[2].rotCabeza = 0;
-	KeyFrame2[2].rotbrazoIzq = 30.0f;
-	KeyFrame2[2].rotbrazoDer = -30.0f;
+		KeyFrame2[2].posX1 = 100.0f;
+		KeyFrame2[2].posY1 = 0;
+		KeyFrame2[2].posZ1 = 0;
+		KeyFrame2[2].rotpiernaIzq = -30.0f;
+		KeyFrame2[2].rotpiernaDer = 30.0f;
+		KeyFrame2[2].rotTorso = 0;
+		KeyFrame2[2].rotBolsa = 10.0f;
+		KeyFrame2[2].rotCabeza = 0;
+		KeyFrame2[2].rotbrazoIzq = 30.0f;
+		KeyFrame2[2].rotbrazoDer = -30.0f;
 
-	KeyFrame2[3].posX1 = 150.0f;
-	KeyFrame2[3].posY1 = 0;
-	KeyFrame2[3].posZ1 = 0;
-	KeyFrame2[3].rotpiernaIzq = 30.0f;
-	KeyFrame2[3].rotpiernaDer = -30.0f;
-	KeyFrame2[3].rotTorso = 0;
-	KeyFrame2[3].rotBolsa = 10.0f;
-	KeyFrame2[3].rotCabeza = 0;
-	KeyFrame2[3].rotbrazoIzq = -30.0f;
-	KeyFrame2[3].rotbrazoDer = 30.0f;
+		KeyFrame2[3].posX1 = 150.0f;
+		KeyFrame2[3].posY1 = 0;
+		KeyFrame2[3].posZ1 = 0;
+		KeyFrame2[3].rotpiernaIzq = 30.0f;
+		KeyFrame2[3].rotpiernaDer = -30.0f;
+		KeyFrame2[3].rotTorso = 0;
+		KeyFrame2[3].rotBolsa = 10.0f;
+		KeyFrame2[3].rotCabeza = 0;
+		KeyFrame2[3].rotbrazoIzq = -30.0f;
+		KeyFrame2[3].rotbrazoDer = 30.0f;
 
-	KeyFrame2[4].posX1 = 200.0f;
-	KeyFrame2[4].posY1 = 0;
-	KeyFrame2[4].posZ1 = 0;
-	KeyFrame2[4].rotpiernaIzq = -30.0f;
-	KeyFrame2[4].rotpiernaDer = 30.0f;
-	KeyFrame2[4].rotTorso = 0;
-	KeyFrame2[4].rotBolsa = 10.0f;
-	KeyFrame2[4].rotCabeza = 0;
-	KeyFrame2[4].rotbrazoIzq = 30.0f;
-	KeyFrame2[4].rotbrazoDer = -30.0f;
+		KeyFrame2[4].posX1 = 200.0f;
+		KeyFrame2[4].posY1 = 0;
+		KeyFrame2[4].posZ1 = 0;
+		KeyFrame2[4].rotpiernaIzq = -30.0f;
+		KeyFrame2[4].rotpiernaDer = 30.0f;
+		KeyFrame2[4].rotTorso = 0;
+		KeyFrame2[4].rotBolsa = 10.0f;
+		KeyFrame2[4].rotCabeza = 0;
+		KeyFrame2[4].rotbrazoIzq = 30.0f;
+		KeyFrame2[4].rotbrazoDer = -30.0f;
 
-	KeyFrame2[5].posX1 = 255.0f;
-	KeyFrame2[5].posY1 = 0;
-	KeyFrame2[5].posZ1 = 0.0f;
-	KeyFrame2[5].rotpiernaIzq = 0.0f;
-	KeyFrame2[5].rotpiernaDer = 0.0f;
-	KeyFrame2[5].rotTorso = -90.0f;
-	KeyFrame2[5].rotBolsa = 0.0f;
-	KeyFrame2[5].rotCabeza = 0;
-	KeyFrame2[5].rotbrazoIzq = 0.0f;
-	KeyFrame2[5].rotbrazoDer = 0.0f;
+		KeyFrame2[5].posX1 = 255.0f;
+		KeyFrame2[5].posY1 = 0;
+		KeyFrame2[5].posZ1 = 0.0f;
+		KeyFrame2[5].rotpiernaIzq = 0.0f;
+		KeyFrame2[5].rotpiernaDer = 0.0f;
+		KeyFrame2[5].rotTorso = -90.0f;
+		KeyFrame2[5].rotBolsa = 0.0f;
+		KeyFrame2[5].rotCabeza = 0;
+		KeyFrame2[5].rotbrazoIzq = 0.0f;
+		KeyFrame2[5].rotbrazoDer = 0.0f;
 
-	KeyFrame2[6].posX1 = 255.0f;
-	KeyFrame2[6].posY1 = 0;
-	KeyFrame2[6].posZ1 = 50.0f;
-	KeyFrame2[6].rotpiernaIzq = 30.0f;
-	KeyFrame2[6].rotpiernaDer = -30.0f;
-	KeyFrame2[6].rotTorso = -90.0f;
-	KeyFrame2[6].rotBolsa = 10.0f;
-	KeyFrame2[6].rotCabeza = 0;
-	KeyFrame2[6].rotbrazoIzq = -30.0f;
-	KeyFrame2[6].rotbrazoDer = 30.0f;
+		KeyFrame2[6].posX1 = 255.0f;
+		KeyFrame2[6].posY1 = 0;
+		KeyFrame2[6].posZ1 = 50.0f;
+		KeyFrame2[6].rotpiernaIzq = 30.0f;
+		KeyFrame2[6].rotpiernaDer = -30.0f;
+		KeyFrame2[6].rotTorso = -90.0f;
+		KeyFrame2[6].rotBolsa = 10.0f;
+		KeyFrame2[6].rotCabeza = 0;
+		KeyFrame2[6].rotbrazoIzq = -30.0f;
+		KeyFrame2[6].rotbrazoDer = 30.0f;
 
-	KeyFrame2[7].posX1 = 255.0f;
-	KeyFrame2[7].posY1 = 0;
-	KeyFrame2[7].posZ1 = 100;
-	KeyFrame2[7].rotpiernaIzq = -30.0f;
-	KeyFrame2[7].rotpiernaDer = 30.0f;
-	KeyFrame2[7].rotTorso = -90.0f;
-	KeyFrame2[7].rotBolsa = 10.0f;
-	KeyFrame2[7].rotCabeza = 0;
-	KeyFrame2[7].rotbrazoIzq = 30.0f;
-	KeyFrame2[7].rotbrazoDer = -30.0f;
+		KeyFrame2[7].posX1 = 255.0f;
+		KeyFrame2[7].posY1 = 0;
+		KeyFrame2[7].posZ1 = 100;
+		KeyFrame2[7].rotpiernaIzq = -30.0f;
+		KeyFrame2[7].rotpiernaDer = 30.0f;
+		KeyFrame2[7].rotTorso = -90.0f;
+		KeyFrame2[7].rotBolsa = 10.0f;
+		KeyFrame2[7].rotCabeza = 0;
+		KeyFrame2[7].rotbrazoIzq = 30.0f;
+		KeyFrame2[7].rotbrazoDer = -30.0f;
 
-	KeyFrame2[8].posX1 = 255.0f;
-	KeyFrame2[8].posY1 = 0;
-	KeyFrame2[8].posZ1 =150.0f;
-	KeyFrame2[8].rotpiernaIzq = 30.0f;
-	KeyFrame2[8].rotpiernaDer = -30.0f;
-	KeyFrame2[8].rotTorso = -90.0f;
-	KeyFrame2[8].rotBolsa = 10.0f;
-	KeyFrame2[8].rotCabeza = 0;
-	KeyFrame2[8].rotbrazoIzq = -30.0f;
-	KeyFrame2[8].rotbrazoDer = 30.0f;
+		KeyFrame2[8].posX1 = 255.0f;
+		KeyFrame2[8].posY1 = 0;
+		KeyFrame2[8].posZ1 =150.0f;
+		KeyFrame2[8].rotpiernaIzq = 30.0f;
+		KeyFrame2[8].rotpiernaDer = -30.0f;
+		KeyFrame2[8].rotTorso = -90.0f;
+		KeyFrame2[8].rotBolsa = 10.0f;
+		KeyFrame2[8].rotCabeza = 0;
+		KeyFrame2[8].rotbrazoIzq = -30.0f;
+		KeyFrame2[8].rotbrazoDer = 30.0f;
 
-	KeyFrame2[9].posX1 = 255.0f;
-	KeyFrame2[9].posY1 = 0;
-	KeyFrame2[9].posZ1 = 200;
-	KeyFrame2[9].rotpiernaIzq = -30.0f;
-	KeyFrame2[9].rotpiernaDer = 30.0f;
-	KeyFrame2[9].rotTorso = -90.0f;
-	KeyFrame2[9].rotBolsa = 10.0f;
-	KeyFrame2[9].rotCabeza = 0;
-	KeyFrame2[9].rotbrazoIzq = 30.0f;
-	KeyFrame2[9].rotbrazoDer = -30.0f;
+		KeyFrame2[9].posX1 = 255.0f;
+		KeyFrame2[9].posY1 = 0;
+		KeyFrame2[9].posZ1 = 200;
+		KeyFrame2[9].rotpiernaIzq = -30.0f;
+		KeyFrame2[9].rotpiernaDer = 30.0f;
+		KeyFrame2[9].rotTorso = -90.0f;
+		KeyFrame2[9].rotBolsa = 10.0f;
+		KeyFrame2[9].rotCabeza = 0;
+		KeyFrame2[9].rotbrazoIzq = 30.0f;
+		KeyFrame2[9].rotbrazoDer = -30.0f;
 
-	KeyFrame2[10].posX1 = 255.0f;
-	KeyFrame2[10].posY1 = 0;
-	KeyFrame2[10].posZ1 = 250.0f;
-	KeyFrame2[10].rotpiernaIzq = 30.0f;
-	KeyFrame2[10].rotpiernaDer = -30.0f;
-	KeyFrame2[10].rotTorso = -90.0f;
-	KeyFrame2[10].rotBolsa = 10.0f;
-	KeyFrame2[10].rotCabeza = -90.0f;
-	KeyFrame2[10].rotbrazoIzq = -30.0f;
-	KeyFrame2[10].rotbrazoDer = 30.0f;
+		KeyFrame2[10].posX1 = 255.0f;
+		KeyFrame2[10].posY1 = 0;
+		KeyFrame2[10].posZ1 = 250.0f;
+		KeyFrame2[10].rotpiernaIzq = 30.0f;
+		KeyFrame2[10].rotpiernaDer = -30.0f;
+		KeyFrame2[10].rotTorso = -90.0f;
+		KeyFrame2[10].rotBolsa = 10.0f;
+		KeyFrame2[10].rotCabeza = -90.0f;
+		KeyFrame2[10].rotbrazoIzq = -30.0f;
+		KeyFrame2[10].rotbrazoDer = 30.0f;
 
-	KeyFrame2[11].posX1 = 255.0f;
-	KeyFrame2[11].posY1 = 0;
-	KeyFrame2[11].posZ1 = 300;
-	KeyFrame2[11].rotpiernaIzq = -30.0f;
-	KeyFrame2[11].rotpiernaDer = 30.0f;
-	KeyFrame2[11].rotTorso = -90.0f;
-	KeyFrame2[11].rotBolsa = 10.0f;
-	KeyFrame2[11].rotCabeza = 0;
-	KeyFrame2[11].rotbrazoIzq = 30.0f;
-	KeyFrame2[11].rotbrazoDer = -30.0f;
+		KeyFrame2[11].posX1 = 255.0f;
+		KeyFrame2[11].posY1 = 0;
+		KeyFrame2[11].posZ1 = 300;
+		KeyFrame2[11].rotpiernaIzq = -30.0f;
+		KeyFrame2[11].rotpiernaDer = 30.0f;
+		KeyFrame2[11].rotTorso = -90.0f;
+		KeyFrame2[11].rotBolsa = 10.0f;
+		KeyFrame2[11].rotCabeza = 0;
+		KeyFrame2[11].rotbrazoIzq = 30.0f;
+		KeyFrame2[11].rotbrazoDer = -30.0f;
 
-	KeyFrame2[12].posX1 = 255.0f;
-	KeyFrame2[12].posY1 = 0;
-	KeyFrame2[12].posZ1 = 350.0f;
-	KeyFrame2[12].rotpiernaIzq = 30.0f;
-	KeyFrame2[12].rotpiernaDer = -30.0f;
-	KeyFrame2[12].rotTorso = -90.0f;
-	KeyFrame2[12].rotBolsa = 10.0f;
-	KeyFrame2[12].rotCabeza = 0;
-	KeyFrame2[12].rotbrazoIzq = -30.0f;
-	KeyFrame2[12].rotbrazoDer = 30.0f;
+		KeyFrame2[12].posX1 = 255.0f;
+		KeyFrame2[12].posY1 = 0;
+		KeyFrame2[12].posZ1 = 350.0f;
+		KeyFrame2[12].rotpiernaIzq = 30.0f;
+		KeyFrame2[12].rotpiernaDer = -30.0f;
+		KeyFrame2[12].rotTorso = -90.0f;
+		KeyFrame2[12].rotBolsa = 10.0f;
+		KeyFrame2[12].rotCabeza = 0;
+		KeyFrame2[12].rotbrazoIzq = -30.0f;
+		KeyFrame2[12].rotbrazoDer = 30.0f;
 
-	KeyFrame2[13].posX1 = 255.0f;
-	KeyFrame2[13].posY1 = 0;
-	KeyFrame2[13].posZ1 = 400;
-	KeyFrame2[13].rotpiernaIzq = -30.0f;
-	KeyFrame2[13].rotpiernaDer = 30.0f;
-	KeyFrame2[13].rotTorso = -90.0f;
-	KeyFrame2[13].rotBolsa = 10.0f;
-	KeyFrame2[13].rotCabeza = 0;
-	KeyFrame2[13].rotbrazoIzq = 30.0f;
-	KeyFrame2[13].rotbrazoDer = -30.0f;
+		KeyFrame2[13].posX1 = 255.0f;
+		KeyFrame2[13].posY1 = 0;
+		KeyFrame2[13].posZ1 = 400;
+		KeyFrame2[13].rotpiernaIzq = -30.0f;
+		KeyFrame2[13].rotpiernaDer = 30.0f;
+		KeyFrame2[13].rotTorso = -90.0f;
+		KeyFrame2[13].rotBolsa = 10.0f;
+		KeyFrame2[13].rotCabeza = 0;
+		KeyFrame2[13].rotbrazoIzq = 30.0f;
+		KeyFrame2[13].rotbrazoDer = -30.0f;
 
-	KeyFrame2[14].posX1 = 255.0f;
-	KeyFrame2[14].posY1 = 0;
-	KeyFrame2[14].posZ1 = 450.0f;
-	KeyFrame2[14].rotpiernaIzq = 30.0f;
-	KeyFrame2[14].rotpiernaDer = -30.0f;
-	KeyFrame2[14].rotTorso = -90.0f;
-	KeyFrame2[14].rotBolsa = 10.0f;
-	KeyFrame2[14].rotCabeza = 0;
-	KeyFrame2[14].rotbrazoIzq = -30.0f;
-	KeyFrame2[14].rotbrazoDer = 30.0f;
+		KeyFrame2[14].posX1 = 255.0f;
+		KeyFrame2[14].posY1 = 0;
+		KeyFrame2[14].posZ1 = 450.0f;
+		KeyFrame2[14].rotpiernaIzq = 30.0f;
+		KeyFrame2[14].rotpiernaDer = -30.0f;
+		KeyFrame2[14].rotTorso = -90.0f;
+		KeyFrame2[14].rotBolsa = 10.0f;
+		KeyFrame2[14].rotCabeza = 0;
+		KeyFrame2[14].rotbrazoIzq = -30.0f;
+		KeyFrame2[14].rotbrazoDer = 30.0f;
 
-	KeyFrame2[15].posX1 = 255.0f;
-	KeyFrame2[15].posY1 = 0;
-	KeyFrame2[15].posZ1 = 500;
-	KeyFrame2[15].rotpiernaIzq = -30.0f;
-	KeyFrame2[15].rotpiernaDer = 30.0f;
-	KeyFrame2[15].rotTorso = -90.0f;
-	KeyFrame2[15].rotBolsa = 10.0f;
-	KeyFrame2[15].rotCabeza = 0;
-	KeyFrame2[15].rotbrazoIzq = 30.0f;
-	KeyFrame2[15].rotbrazoDer = -30.0f;
+		KeyFrame2[15].posX1 = 255.0f;
+		KeyFrame2[15].posY1 = 0;
+		KeyFrame2[15].posZ1 = 500;
+		KeyFrame2[15].rotpiernaIzq = -30.0f;
+		KeyFrame2[15].rotpiernaDer = 30.0f;
+		KeyFrame2[15].rotTorso = -90.0f;
+		KeyFrame2[15].rotBolsa = 10.0f;
+		KeyFrame2[15].rotCabeza = 0;
+		KeyFrame2[15].rotbrazoIzq = 30.0f;
+		KeyFrame2[15].rotbrazoDer = -30.0f;
 
-	KeyFrame2[16].posX1 = 255.0f;
-	KeyFrame2[16].posY1 = 0;
-	KeyFrame2[16].posZ1 = 550;
-	KeyFrame2[16].rotpiernaIzq = 0.0f;
-	KeyFrame2[16].rotpiernaDer = 0.0f;
-	KeyFrame2[16].rotTorso = -180.0f;
-	KeyFrame2[16].rotBolsa = 10.0f;
-	KeyFrame2[16].rotCabeza = 0;
-	KeyFrame2[16].rotbrazoIzq = 0.0f;
-	KeyFrame2[16].rotbrazoDer = 0.0f;
+		KeyFrame2[16].posX1 = 255.0f;
+		KeyFrame2[16].posY1 = 0;
+		KeyFrame2[16].posZ1 = 550;
+		KeyFrame2[16].rotpiernaIzq = 0.0f;
+		KeyFrame2[16].rotpiernaDer = 0.0f;
+		KeyFrame2[16].rotTorso = -180.0f;
+		KeyFrame2[16].rotBolsa = 10.0f;
+		KeyFrame2[16].rotCabeza = 0;
+		KeyFrame2[16].rotbrazoIzq = 0.0f;
+		KeyFrame2[16].rotbrazoDer = 0.0f;
 
-	KeyFrame2[17].posX1 = 200.0f;
-	KeyFrame2[17].posY1 = 0;
-	KeyFrame2[17].posZ1 = 550.0f;
-	KeyFrame2[17].rotpiernaIzq = 30.0f;
-	KeyFrame2[17].rotpiernaDer = -30.0f;
-	KeyFrame2[17].rotTorso = -180.0f;
-	KeyFrame2[17].rotBolsa = 10.0f;
-	KeyFrame2[17].rotCabeza = 0.0f;
-	KeyFrame2[17].rotbrazoIzq = -30.0f;
-	KeyFrame2[17].rotbrazoDer = 30.0f;
+		KeyFrame2[17].posX1 = 200.0f;
+		KeyFrame2[17].posY1 = 0;
+		KeyFrame2[17].posZ1 = 550.0f;
+		KeyFrame2[17].rotpiernaIzq = 30.0f;
+		KeyFrame2[17].rotpiernaDer = -30.0f;
+		KeyFrame2[17].rotTorso = -180.0f;
+		KeyFrame2[17].rotBolsa = 10.0f;
+		KeyFrame2[17].rotCabeza = 0.0f;
+		KeyFrame2[17].rotbrazoIzq = -30.0f;
+		KeyFrame2[17].rotbrazoDer = 30.0f;
 
-	KeyFrame2[18].posX1 = 150.0f;
-	KeyFrame2[18].posY1 = 0;
-	KeyFrame2[18].posZ1 = 550.0f;
-	KeyFrame2[18].rotpiernaIzq = -30.0f;
-	KeyFrame2[18].rotpiernaDer = 30.0f;
-	KeyFrame2[18].rotTorso = -180.0f;
-	KeyFrame2[18].rotBolsa = 10.0f;
-	KeyFrame2[18].rotCabeza = 0;
-	KeyFrame2[18].rotbrazoIzq = 30.0f;
-	KeyFrame2[18].rotbrazoDer = -30.0f;
+		KeyFrame2[18].posX1 = 150.0f;
+		KeyFrame2[18].posY1 = 0;
+		KeyFrame2[18].posZ1 = 550.0f;
+		KeyFrame2[18].rotpiernaIzq = -30.0f;
+		KeyFrame2[18].rotpiernaDer = 30.0f;
+		KeyFrame2[18].rotTorso = -180.0f;
+		KeyFrame2[18].rotBolsa = 10.0f;
+		KeyFrame2[18].rotCabeza = 0;
+		KeyFrame2[18].rotbrazoIzq = 30.0f;
+		KeyFrame2[18].rotbrazoDer = -30.0f;
 
-	KeyFrame2[19].posX1 = 100.0f;
-	KeyFrame2[19].posY1 = 0;
-	KeyFrame2[19].posZ1 = 550.0f;
-	KeyFrame2[19].rotpiernaIzq = 30.0f;
-	KeyFrame2[19].rotpiernaDer = -30.0f;
-	KeyFrame2[19].rotTorso = -180.0f;
-	KeyFrame2[19].rotBolsa = 10.0f;
-	KeyFrame2[19].rotCabeza = 0.0f;
-	KeyFrame2[19].rotbrazoIzq = -30.0f;
-	KeyFrame2[19].rotbrazoDer = 30.0f;
+		KeyFrame2[19].posX1 = 100.0f;
+		KeyFrame2[19].posY1 = 0;
+		KeyFrame2[19].posZ1 = 550.0f;
+		KeyFrame2[19].rotpiernaIzq = 30.0f;
+		KeyFrame2[19].rotpiernaDer = -30.0f;
+		KeyFrame2[19].rotTorso = -180.0f;
+		KeyFrame2[19].rotBolsa = 10.0f;
+		KeyFrame2[19].rotCabeza = 0.0f;
+		KeyFrame2[19].rotbrazoIzq = -30.0f;
+		KeyFrame2[19].rotbrazoDer = 30.0f;
 
-	KeyFrame2[20].posX1 = 50.0f;
-	KeyFrame2[20].posY1 = 0;
-	KeyFrame2[20].posZ1 = 550;
-	KeyFrame2[20].rotpiernaIzq = -30.0f;
-	KeyFrame2[20].rotpiernaDer = 30.0f;
-	KeyFrame2[20].rotTorso = -180.0f;
-	KeyFrame2[20].rotBolsa = 10.0f;
-	KeyFrame2[20].rotCabeza = 0;
-	KeyFrame2[20].rotbrazoIzq = 30.0f;
-	KeyFrame2[20].rotbrazoDer = -30.0f;
+		KeyFrame2[20].posX1 = 50.0f;
+		KeyFrame2[20].posY1 = 0;
+		KeyFrame2[20].posZ1 = 550;
+		KeyFrame2[20].rotpiernaIzq = -30.0f;
+		KeyFrame2[20].rotpiernaDer = 30.0f;
+		KeyFrame2[20].rotTorso = -180.0f;
+		KeyFrame2[20].rotBolsa = 10.0f;
+		KeyFrame2[20].rotCabeza = 0;
+		KeyFrame2[20].rotbrazoIzq = 30.0f;
+		KeyFrame2[20].rotbrazoDer = -30.0f;
 
-	KeyFrame2[21].posX1 = 0.0f;
-	KeyFrame2[21].posY1 = 0;
-	KeyFrame2[21].posZ1 = 550.0f;
-	KeyFrame2[21].rotpiernaIzq = 30.0f;
-	KeyFrame2[21].rotpiernaDer = -30.0f;
-	KeyFrame2[21].rotTorso = -180.0f;
-	KeyFrame2[21].rotBolsa = 10.0f;
-	KeyFrame2[21].rotCabeza = 0.0f;
-	KeyFrame2[21].rotbrazoIzq = -30.0f;
-	KeyFrame2[21].rotbrazoDer = 30.0f;
+		KeyFrame2[21].posX1 = 0.0f;
+		KeyFrame2[21].posY1 = 0;
+		KeyFrame2[21].posZ1 = 550.0f;
+		KeyFrame2[21].rotpiernaIzq = 30.0f;
+		KeyFrame2[21].rotpiernaDer = -30.0f;
+		KeyFrame2[21].rotTorso = -180.0f;
+		KeyFrame2[21].rotBolsa = 10.0f;
+		KeyFrame2[21].rotCabeza = 0.0f;
+		KeyFrame2[21].rotbrazoIzq = -30.0f;
+		KeyFrame2[21].rotbrazoDer = 30.0f;
 
-//Keyframes para la animacion de la persona caminando
+	*/
+	//Keyframes para la animacion del tiburon
 
 	KeyFrame3[0].mov_tibu_x = 0;
 	KeyFrame3[0].mov_tibu_y = 0;
@@ -1125,17 +1207,71 @@ int main()
 	KeyFrame3[8].cabezatibu = -10;
 	KeyFrame3[8].colatibu = 15;
 
-	KeyFrame3[8].mov_tibu_x = 450;
-	KeyFrame3[8].mov_tibu_y = -20;
-	KeyFrame3[8].mov_tibu_z = 0;
-	KeyFrame3[8].cabezatibu = -10;
-	KeyFrame3[8].colatibu = 15;
-
-	KeyFrame3[9].mov_tibu_x = 0;
-	KeyFrame3[9].mov_tibu_y = 0;
+	KeyFrame3[9].mov_tibu_x = 450;
+	KeyFrame3[9].mov_tibu_y = -20;
 	KeyFrame3[9].mov_tibu_z = 0;
-	KeyFrame3[9].cabezatibu = -10;
-	KeyFrame3[9].colatibu = 15;
+	KeyFrame3[9].cabezatibu = 10;
+	KeyFrame3[9].colatibu = -15;
+
+	KeyFrame3[10].mov_tibu_x = 450;
+	KeyFrame3[10].mov_tibu_y = -20;
+	KeyFrame3[10].mov_tibu_z = 100;
+	KeyFrame3[10].cabezatibu = -90;
+	KeyFrame3[10].colatibu = 15;
+
+	KeyFrame3[11].mov_tibu_x = 400;
+	KeyFrame3[11].mov_tibu_y = 0;
+	KeyFrame3[11].mov_tibu_z = 100;
+	KeyFrame3[11].cabezatibu = -180;
+	KeyFrame3[11].colatibu = -15;
+
+	KeyFrame3[12].mov_tibu_x = 350;
+	KeyFrame3[12].mov_tibu_y = 0;
+	KeyFrame3[12].mov_tibu_z = 100;
+	KeyFrame3[12].cabezatibu = -180;
+	KeyFrame3[12].colatibu = 15;
+
+	KeyFrame3[13].mov_tibu_x = 400;
+	KeyFrame3[13].mov_tibu_y = 0;
+	KeyFrame3[13].mov_tibu_z = 100;
+	KeyFrame3[13].cabezatibu = -180;
+	KeyFrame3[13].colatibu = -15;
+
+	KeyFrame3[14].mov_tibu_x = 250;
+	KeyFrame3[14].mov_tibu_y = 0;
+	KeyFrame3[14].mov_tibu_z = 100;
+	KeyFrame3[14].cabezatibu = -180;
+	KeyFrame3[14].colatibu = 15;
+
+	KeyFrame3[15].mov_tibu_x = 200;
+	KeyFrame3[15].mov_tibu_y = 0;
+	KeyFrame3[15].mov_tibu_z = 100;
+	KeyFrame3[15].cabezatibu = -180;
+	KeyFrame3[15].colatibu = -15;
+
+	KeyFrame3[16].mov_tibu_x = 150;
+	KeyFrame3[16].mov_tibu_y = 0;
+	KeyFrame3[16].mov_tibu_z = 100;
+	KeyFrame3[16].cabezatibu = -180;
+	KeyFrame3[16].colatibu = 15;
+
+	KeyFrame3[17].mov_tibu_x = 100;
+	KeyFrame3[17].mov_tibu_y = 0;
+	KeyFrame3[17].mov_tibu_z = 100;
+	KeyFrame3[17].cabezatibu = -180;
+	KeyFrame3[17].colatibu = -15;
+
+	KeyFrame3[18].mov_tibu_x = 50;
+	KeyFrame3[18].mov_tibu_y = 0;
+	KeyFrame3[18].mov_tibu_z = 100;
+	KeyFrame3[18].cabezatibu = -180;
+	KeyFrame3[18].colatibu = 15;
+
+	KeyFrame3[19].mov_tibu_x = 5;
+	KeyFrame3[19].mov_tibu_y = 0;
+	KeyFrame3[19].mov_tibu_z = 100;
+	KeyFrame3[19].cabezatibu = -180;
+	KeyFrame3[19].colatibu = -15;
 
 //KeyFrames para la animacion del Sube y baja
 
@@ -1193,6 +1329,108 @@ int main()
 	KeyFrame4[8].subeybaja01 = -30;
 	KeyFrame4[8].subeybaja02 = 30;
 
+//Keyframes para la animacion de la pelota
+
+	KeyFrame5[0].posX_ball =0;
+	KeyFrame5[0].posY_ball =0;
+	KeyFrame5[0].posZ_ball =0;
+	KeyFrame5[0].rotball =0;
+
+	KeyFrame5[1].posX_ball =160;
+	KeyFrame5[1].posY_ball =180;
+	KeyFrame5[1].posZ_ball = 0;
+	KeyFrame5[1].rotball = 360;
+
+	KeyFrame5[2].posX_ball =360;
+	KeyFrame5[2].posY_ball =270;
+	KeyFrame5[2].posZ_ball = 0;
+	KeyFrame5[2].rotball = 720;
+
+	KeyFrame5[3].posX_ball = 560;
+	KeyFrame5[3].posY_ball =360;
+	KeyFrame5[3].posZ_ball = 0;
+	KeyFrame5[3].rotball =1080;
+
+	KeyFrame5[4].posX_ball = 760;
+	KeyFrame5[4].posY_ball = 400;
+	KeyFrame5[4].posZ_ball = 0;
+	KeyFrame5[4].rotball = 1440;
+
+	KeyFrame5[5].posX_ball = 960;
+	KeyFrame5[5].posY_ball = 360;
+	KeyFrame5[5].posZ_ball = 0;
+	KeyFrame5[5].rotball = 1800;
+
+	KeyFrame5[6].posX_ball = 1160;
+	KeyFrame5[6].posY_ball = 270;
+	KeyFrame5[6].posZ_ball = 0;
+	KeyFrame5[6].rotball = 2160;
+
+	KeyFrame5[7].posX_ball = 1360;
+	KeyFrame5[7].posY_ball = 180;
+	KeyFrame5[7].posZ_ball = 0;
+	KeyFrame5[7].rotball = 2520;
+
+	KeyFrame5[8].posX_ball = 1560;
+	KeyFrame5[8].posY_ball = 0;
+	KeyFrame5[8].posZ_ball = 0;
+	KeyFrame5[8].rotball = 2880;
+
+	KeyFrame5[9].posX_ball = 1760;
+	KeyFrame5[9].posY_ball = -125;
+	KeyFrame5[9].posZ_ball = 0;
+	KeyFrame5[9].rotball = 3240;
+
+	KeyFrame5[10].posX_ball = 1960;
+	KeyFrame5[10].posY_ball = 30;
+	KeyFrame5[10].posZ_ball = 0;
+	KeyFrame5[10].rotball = 3600;
+
+	KeyFrame5[11].posX_ball = 2160;
+	KeyFrame5[11].posY_ball = -125;
+	KeyFrame5[11].posZ_ball = 0;
+	KeyFrame5[11].rotball = 3960;
+
+	KeyFrame5[12].posX_ball = 2360;
+	KeyFrame5[12].posY_ball = 10;
+	KeyFrame5[12].posZ_ball = 0;
+	KeyFrame5[12].rotball = 4320;
+
+	KeyFrame5[13].posX_ball = 2560;
+	KeyFrame5[13].posY_ball = -125;
+	KeyFrame5[13].posZ_ball = 0;
+	KeyFrame5[13].rotball = 4680;
+
+	KeyFrame5[14].posX_ball = 2640;
+	KeyFrame5[14].posY_ball = 5;
+	KeyFrame5[14].posZ_ball = 0;
+	KeyFrame5[14].rotball = 4320;
+
+	KeyFrame5[15].posX_ball = 2500;
+	KeyFrame5[15].posY_ball = -125;
+	KeyFrame5[15].posZ_ball = 0;
+	KeyFrame5[15].rotball = 3960;
+
+	KeyFrame5[16].posX_ball = 2400;
+	KeyFrame5[16].posY_ball = -80;
+	KeyFrame5[16].posZ_ball = 0;
+	KeyFrame5[16].rotball = 3600;
+
+	KeyFrame5[17].posX_ball = 2300;
+	KeyFrame5[17].posY_ball = -125;
+	KeyFrame5[17].posZ_ball = 0;
+	KeyFrame5[17].rotball = 3240;
+
+	KeyFrame5[18].posX_ball = 2200;
+	KeyFrame5[18].posY_ball = -125;
+	KeyFrame5[18].posZ_ball = 0;
+	KeyFrame5[18].rotball = 2880;
+
+	KeyFrame5[19].posX_ball = 2000;
+	KeyFrame5[19].posY_ball = -125;
+	KeyFrame5[19].posZ_ball = 0;
+	KeyFrame5[19].rotball = 2520;
+	
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -1273,7 +1511,7 @@ int main()
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Mujer Caminando
 		// -------------------------------------------------------------------------------------------------------------------------
-
+		/*
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(350.0f + mov_Mujer_X, 0.0f, 400.0f + mov_Mujer_Z));
 		model = glm::scale(model, glm::vec3(0.2f));	
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1282,17 +1520,17 @@ int main()
 		tmp = model = glm::rotate(model, glm::radians(orienta3), glm::vec3(0.0f, 1.0f, 0.0f));
 		animShader.setMat4("model", model);
 		Mujer_Caminando.Draw(animShader);
-
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Ingeniero Saludando
 		// -------------------------------------------------------------------------------------------------------------------------
-
+		/*
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(540.0f, 125.0f, 13.0f)); 
 		model = glm::scale(model, glm::vec3(0.2f));	
 		model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		animShader.setMat4("model", model);
 		Inge.Draw(animShader);
-
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -1392,7 +1630,7 @@ int main()
 		// -------------------------------------------------------------------------------------------------------------------------
 		//Medidores
 		// -------------------------------------------------------------------------------------------------------------------------
-
+		/*
 		//MedidorLuz casa01
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(420.0f, 0.0f, -51.3f));
@@ -1434,7 +1672,7 @@ int main()
 		model = glm::scale(model, glm::vec3(0.35f));
 		staticShader.setMat4("model", model);
 		ModelMedidor.Draw(staticShader);
-		
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		//Sube y Baja 1
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -1498,7 +1736,7 @@ int main()
 		// -------------------------------------------------------------------------------------------------------------------------
 		//Coche1
 		// -------------------------------------------------------------------------------------------------------------------------
-
+		/*
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(35.0f, 0.0f, 185.0f));
 		staticShader.setMat4("model", model);
 		Coche1.Draw(staticShader);
@@ -1510,12 +1748,13 @@ int main()
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(35.0f, 0.0f, 425.0f));
 		staticShader.setMat4("model", model);
 		Coche2.Draw(staticShader);
-
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Persona tirando la basura
 		// -------------------------------------------------------------------------------------------------------------------------
 
 		//Torso
+		/*
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(-210.0f, -1.0f, 128.0f));
 		model = glm::scale(model, glm::vec3(0.6f));
 		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
@@ -1561,11 +1800,11 @@ int main()
 		model = glm::rotate(model, glm::radians(rotBolsa), glm::vec3(1.0f, 0.0f, 0.0f));
 		staticShader.setMat4("model", model);
 		Bolsa.Draw(staticShader);
-
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------		
 		// Lamparas
 		// -------------------------------------------------------------------------------------------------------------------------
-		
+		/*
 		//Primera iniciando desde la piscina
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(37.0f, 3.0f, -311.0f));
 		model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));
@@ -1601,11 +1840,11 @@ int main()
 		model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));
 		staticShader.setMat4("model", model);
 		Lampara.Draw(staticShader);
-
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Basureros
 		// -------------------------------------------------------------------------------------------------------------------------
-
+		/*
 		//Basurero lado Derecho
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(586.5f, 1.0f, 454.0f));
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.35f));
@@ -1619,11 +1858,11 @@ int main()
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		staticShader.setMat4("model", model);
 		Basurero.Draw(staticShader);
-		
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro que tendra animacion
 		// -------------------------------------------------------------------------------------------------------------------------
-
+		/*
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(290.0f + movAuto_x, -1.0f + movAuto_y, 450.0f+ movAuto_z));
 		model = glm::scale(model, glm::vec3(0.2f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1652,11 +1891,11 @@ int main()
 		model = glm::rotate(model, glm::radians(giroLlantas), glm::vec3(1.0f, 0.0f, 0.0f));
 		staticShader.setMat4("model", model);
 		llanta.Draw(staticShader);	//Izq trase
-
+		*/
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Aguila
 		// -------------------------------------------------------------------------------------------------------------------------
-
+		/*
 		//cuerpo
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(25.0f, 12.0f, -330.0f));
 		model = glm::scale(model, glm::vec3(1.5f));
@@ -1676,6 +1915,27 @@ int main()
 		model = glm::rotate(model, glm::radians(alaDer), glm::vec3(0.0f, 0.0f, 1.0f));
 		staticShader.setMat4("model", model);
 		ala_izquierda.Draw(staticShader);
+		*/
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Perro
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-300.0f, -1.0f, -170.0f));
+		model = glm::scale(model, glm::vec3(0.15f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		staticShader.setMat4("model", model);
+		perro.Draw(staticShader);
+
+		
+		//-------------------------------------------------------------------------------------------------------------------------
+		//Pelota 
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-143.0f, 23.0f, -340.0f));
+		model = glm::scale(model, glm::vec3(0.15f));
+		model = glm::translate(model, glm::vec3(posX_ball, posY_ball, posZ_ball));
+		tmp = model = glm::rotate(model, glm::radians(rotball), glm::vec3(0.0f, 0.0f, 1.0f));
+		staticShader.setMat4("model", model);
+		ball.Draw(staticShader);
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Termina Escenario
@@ -1726,11 +1986,30 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, (float)deltaTime);
 
+
+	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
+		posX_ball++;
+	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+		posX_ball--;
+	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+		posY_ball--;
+	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+		posY_ball++;
+	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+		posZ_ball--;
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+		posZ_ball++;
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+		rotball--;
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+		rotball++;
+
+
 	//Reinicio de la Musica de Fondo
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{ 
-		Fondo->stopAllSounds();
-		Fondo->play2D("Musica/Fondo.mp3", true);
+		//Fondo->stopAllSounds();
+		//Fondo->play2D("Musica/Fondo.mp3", true);
 		Silbido->stopAllSounds();
 		Aguila->stopAllSounds();
 		Tiburon->stopAllSounds();
@@ -1747,7 +2026,7 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	{
 
 		Tiburon->stopAllSounds();
-		Tiburon->play2D("Musica/Tiburon.mp3", true);
+		//Tiburon->play2D("Musica/Tiburon.mp3", true);
 		Fondo->stopAllSounds();
 		Silbido->stopAllSounds();
 		Aguila->stopAllSounds();
@@ -1766,6 +2045,34 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		else
 		{
 			play3 = false;
+			std::cout << "Not enough Key Frames" << std::endl;
+		}
+	}
+
+	//Inicio de la animacion por KeyFrames del pelota
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+
+		//Tiburon->stopAllSounds();
+		//Tiburon->play2D("Musica/Tiburon.mp3", true);
+		Fondo->stopAllSounds();
+		Silbido->stopAllSounds();
+		Aguila->stopAllSounds();
+
+		if (play5 == false && (FrameIndex5 > 1))
+		{
+			std::cout << "Play animation" << std::endl;
+			resetElements5();
+
+			interpolation5();
+
+			play5 = true;
+			playIndex5 = 0;
+			i_curr_steps5 = 0;
+		}
+		else
+		{
+			play5 = false;
 			std::cout << "Not enough Key Frames" << std::endl;
 		}
 	}
