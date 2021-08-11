@@ -462,7 +462,7 @@ void animate(void)
 		{
 			movAuto_z -= 0.5f;
 			movAuto_x -= 1.1f;
-			giroLlantas -= 0.5f;
+			giroLlantas -= 2.0f;
 			rotcoche = 220.0f;
 				if (movAuto_z < -140.0f)
 					carro_4 = false;
@@ -470,7 +470,7 @@ void animate(void)
 		else if (carro_5)
 		{
 			movAuto_z -= 0.3f;
-			giroLlantas -= 0.5f;
+			giroLlantas -= 2.0f;
 			rotcoche = 200.0f;
 				if (movAuto_z < -155.0f)
 					carro_5 = false;
@@ -478,7 +478,7 @@ void animate(void)
 		else if (carro_6)
 		{
 			movAuto_z += 0.3f;
-			giroLlantas += 0.5f;
+			giroLlantas += 2.0f;
 			rotcoche = 180.0f;
 				if (movAuto_z > -137.0f)
 					carro_6 = false;
@@ -630,6 +630,7 @@ void animate(void)
 		}
 	}
 
+	//Animacion de la Pelota
 	if (play5)
 	{
 		if (i_curr_steps5 >= i_max_steps5) //end of animation between frames?
@@ -671,7 +672,7 @@ void getResolution()
 
 int main()
 {
-	//Fondo->play2D("Musica/Fondo.mp3", true);
+	Fondo->play2D("Musica/Fondo.mp3", true);
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -728,12 +729,12 @@ int main()
 	//Carga del Skybox
 	vector<std::string> faces
 	{
-		"resources/skybox/derecha.jpg",
-		"resources/skybox/izquierda.jpg",
-		"resources/skybox/arriba.jpg",
-		"resources/skybox/abajo.jpg",
-		"resources/skybox/atras.jpg",
-		"resources/skybox/fondo.jpg"
+		"resources/skybox/right.jpg",
+		"resources/skybox/left.jpg",
+		"resources/skybox/top.jpg",
+		"resources/skybox/bottom.jpg",
+		"resources/skybox/front.jpg",
+		"resources/skybox/back.jpg"
 	};
 
 	Skybox skybox = Skybox(faces);
@@ -775,16 +776,13 @@ int main()
 	Model perro("resources/objects/perro/Dog.obj");
 	Model ball("resources/objects/pelota/pelota.obj");
 
-	ModelAnim personajeCaminando("resources/objects/Caminando/Caminando.dae");
-	personajeCaminando.initShaders(animShader.ID);
-
 	ModelAnim Mujer_Caminando("resources/objects/Mujer_Caminando/Mujer_Caminando.dae");
 	Mujer_Caminando.initShaders(animShader.ID);
 
 	ModelAnim Inge("resources/objects/Inge/Inge.dae");
 	Inge.initShaders(animShader.ID);
 
-	/*
+	
 		//Keyframes para la animacion del aguila
 
 		KeyFrame[0].posX = 0;
@@ -1150,7 +1148,6 @@ int main()
 		KeyFrame2[21].rotbrazoIzq = -30.0f;
 		KeyFrame2[21].rotbrazoDer = 30.0f;
 
-	*/
 	//Keyframes para la animacion del tiburon
 
 	KeyFrame3[0].mov_tibu_x = 0;
@@ -1231,7 +1228,7 @@ int main()
 	KeyFrame3[12].cabezatibu = -180;
 	KeyFrame3[12].colatibu = 15;
 
-	KeyFrame3[13].mov_tibu_x = 400;
+	KeyFrame3[13].mov_tibu_x = 300;
 	KeyFrame3[13].mov_tibu_y = 0;
 	KeyFrame3[13].mov_tibu_z = 100;
 	KeyFrame3[13].cabezatibu = -180;
@@ -1339,97 +1336,97 @@ int main()
 	KeyFrame5[1].posX_ball =160;
 	KeyFrame5[1].posY_ball =180;
 	KeyFrame5[1].posZ_ball = 0;
-	KeyFrame5[1].rotball = 360;
+	KeyFrame5[1].rotball = -360;
 
 	KeyFrame5[2].posX_ball =360;
 	KeyFrame5[2].posY_ball =270;
 	KeyFrame5[2].posZ_ball = 0;
-	KeyFrame5[2].rotball = 720;
+	KeyFrame5[2].rotball = -720;
 
 	KeyFrame5[3].posX_ball = 560;
 	KeyFrame5[3].posY_ball =360;
 	KeyFrame5[3].posZ_ball = 0;
-	KeyFrame5[3].rotball =1080;
+	KeyFrame5[3].rotball = -1080;
 
 	KeyFrame5[4].posX_ball = 760;
 	KeyFrame5[4].posY_ball = 400;
 	KeyFrame5[4].posZ_ball = 0;
-	KeyFrame5[4].rotball = 1440;
+	KeyFrame5[4].rotball = -1440;
 
 	KeyFrame5[5].posX_ball = 960;
 	KeyFrame5[5].posY_ball = 360;
 	KeyFrame5[5].posZ_ball = 0;
-	KeyFrame5[5].rotball = 1800;
+	KeyFrame5[5].rotball = -1800;
 
 	KeyFrame5[6].posX_ball = 1160;
 	KeyFrame5[6].posY_ball = 270;
 	KeyFrame5[6].posZ_ball = 0;
-	KeyFrame5[6].rotball = 2160;
+	KeyFrame5[6].rotball = -2160;
 
 	KeyFrame5[7].posX_ball = 1360;
 	KeyFrame5[7].posY_ball = 180;
 	KeyFrame5[7].posZ_ball = 0;
-	KeyFrame5[7].rotball = 2520;
+	KeyFrame5[7].rotball = -2520;
 
 	KeyFrame5[8].posX_ball = 1560;
 	KeyFrame5[8].posY_ball = 0;
 	KeyFrame5[8].posZ_ball = 0;
-	KeyFrame5[8].rotball = 2880;
+	KeyFrame5[8].rotball = -2880;
 
 	KeyFrame5[9].posX_ball = 1760;
 	KeyFrame5[9].posY_ball = -125;
 	KeyFrame5[9].posZ_ball = 0;
-	KeyFrame5[9].rotball = 3240;
+	KeyFrame5[9].rotball = -3240;
 
 	KeyFrame5[10].posX_ball = 1960;
 	KeyFrame5[10].posY_ball = 30;
 	KeyFrame5[10].posZ_ball = 0;
-	KeyFrame5[10].rotball = 3600;
+	KeyFrame5[10].rotball = -3600;
 
 	KeyFrame5[11].posX_ball = 2160;
 	KeyFrame5[11].posY_ball = -125;
 	KeyFrame5[11].posZ_ball = 0;
-	KeyFrame5[11].rotball = 3960;
+	KeyFrame5[11].rotball = -3960;
 
 	KeyFrame5[12].posX_ball = 2360;
 	KeyFrame5[12].posY_ball = 10;
 	KeyFrame5[12].posZ_ball = 0;
-	KeyFrame5[12].rotball = 4320;
+	KeyFrame5[12].rotball = -4320;
 
 	KeyFrame5[13].posX_ball = 2560;
 	KeyFrame5[13].posY_ball = -125;
 	KeyFrame5[13].posZ_ball = 0;
-	KeyFrame5[13].rotball = 4680;
+	KeyFrame5[13].rotball = -4680;
 
 	KeyFrame5[14].posX_ball = 2640;
 	KeyFrame5[14].posY_ball = 5;
 	KeyFrame5[14].posZ_ball = 0;
-	KeyFrame5[14].rotball = 4320;
+	KeyFrame5[14].rotball = -4320;
 
 	KeyFrame5[15].posX_ball = 2500;
 	KeyFrame5[15].posY_ball = -125;
 	KeyFrame5[15].posZ_ball = 0;
-	KeyFrame5[15].rotball = 3960;
+	KeyFrame5[15].rotball = -3960;
 
 	KeyFrame5[16].posX_ball = 2400;
 	KeyFrame5[16].posY_ball = -80;
 	KeyFrame5[16].posZ_ball = 0;
-	KeyFrame5[16].rotball = 3600;
+	KeyFrame5[16].rotball = -3600;
 
 	KeyFrame5[17].posX_ball = 2300;
 	KeyFrame5[17].posY_ball = -125;
 	KeyFrame5[17].posZ_ball = 0;
-	KeyFrame5[17].rotball = 3240;
+	KeyFrame5[17].rotball = -3240;
 
 	KeyFrame5[18].posX_ball = 2200;
 	KeyFrame5[18].posY_ball = -125;
 	KeyFrame5[18].posZ_ball = 0;
-	KeyFrame5[18].rotball = 2880;
+	KeyFrame5[18].rotball = -2880;
 
 	KeyFrame5[19].posX_ball = 2000;
 	KeyFrame5[19].posY_ball = -125;
 	KeyFrame5[19].posZ_ball = 0;
-	KeyFrame5[19].rotball = 2520;
+	KeyFrame5[19].rotball = -2520;
 	
 	// render loop
 	// -----------
@@ -1511,7 +1508,7 @@ int main()
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Mujer Caminando
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(350.0f + mov_Mujer_X, 0.0f, 400.0f + mov_Mujer_Z));
 		model = glm::scale(model, glm::vec3(0.2f));	
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1520,17 +1517,17 @@ int main()
 		tmp = model = glm::rotate(model, glm::radians(orienta3), glm::vec3(0.0f, 1.0f, 0.0f));
 		animShader.setMat4("model", model);
 		Mujer_Caminando.Draw(animShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Ingeniero Saludando
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(540.0f, 125.0f, 13.0f)); 
 		model = glm::scale(model, glm::vec3(0.2f));	
 		model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		animShader.setMat4("model", model);
 		Inge.Draw(animShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -1630,7 +1627,7 @@ int main()
 		// -------------------------------------------------------------------------------------------------------------------------
 		//Medidores
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		//MedidorLuz casa01
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(420.0f, 0.0f, -51.3f));
@@ -1672,7 +1669,7 @@ int main()
 		model = glm::scale(model, glm::vec3(0.35f));
 		staticShader.setMat4("model", model);
 		ModelMedidor.Draw(staticShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		//Sube y Baja 1
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -1736,7 +1733,7 @@ int main()
 		// -------------------------------------------------------------------------------------------------------------------------
 		//Coche1
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(35.0f, 0.0f, 185.0f));
 		staticShader.setMat4("model", model);
 		Coche1.Draw(staticShader);
@@ -1748,13 +1745,13 @@ int main()
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(35.0f, 0.0f, 425.0f));
 		staticShader.setMat4("model", model);
 		Coche2.Draw(staticShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Persona tirando la basura
 		// -------------------------------------------------------------------------------------------------------------------------
 
 		//Torso
-		/*
+		
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(-210.0f, -1.0f, 128.0f));
 		model = glm::scale(model, glm::vec3(0.6f));
 		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
@@ -1800,11 +1797,11 @@ int main()
 		model = glm::rotate(model, glm::radians(rotBolsa), glm::vec3(1.0f, 0.0f, 0.0f));
 		staticShader.setMat4("model", model);
 		Bolsa.Draw(staticShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------		
 		// Lamparas
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		//Primera iniciando desde la piscina
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(37.0f, 3.0f, -311.0f));
 		model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));
@@ -1840,11 +1837,11 @@ int main()
 		model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));
 		staticShader.setMat4("model", model);
 		Lampara.Draw(staticShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Basureros
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		//Basurero lado Derecho
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(586.5f, 1.0f, 454.0f));
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.35f));
@@ -1858,11 +1855,11 @@ int main()
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		staticShader.setMat4("model", model);
 		Basurero.Draw(staticShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro que tendra animacion
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(290.0f + movAuto_x, -1.0f + movAuto_y, 450.0f+ movAuto_z));
 		model = glm::scale(model, glm::vec3(0.2f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1891,11 +1888,11 @@ int main()
 		model = glm::rotate(model, glm::radians(giroLlantas), glm::vec3(1.0f, 0.0f, 0.0f));
 		staticShader.setMat4("model", model);
 		llanta.Draw(staticShader);	//Izq trase
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Aguila
 		// -------------------------------------------------------------------------------------------------------------------------
-		/*
+		
 		//cuerpo
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(25.0f, 12.0f, -330.0f));
 		model = glm::scale(model, glm::vec3(1.5f));
@@ -1915,7 +1912,7 @@ int main()
 		model = glm::rotate(model, glm::radians(alaDer), glm::vec3(0.0f, 0.0f, 1.0f));
 		staticShader.setMat4("model", model);
 		ala_izquierda.Draw(staticShader);
-		*/
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Perro
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -1926,9 +1923,9 @@ int main()
 		staticShader.setMat4("model", model);
 		perro.Draw(staticShader);
 
-		
-		//-------------------------------------------------------------------------------------------------------------------------
-		//Pelota 
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Pelota
+		// -------------------------------------------------------------------------------------------------------------------------
 
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(-143.0f, 23.0f, -340.0f));
 		model = glm::scale(model, glm::vec3(0.15f));
@@ -1986,30 +1983,11 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, (float)deltaTime);
 
-
-	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-		posX_ball++;
-	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-		posX_ball--;
-	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-		posY_ball--;
-	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-		posY_ball++;
-	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-		posZ_ball--;
-	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		posZ_ball++;
-	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-		rotball--;
-	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-		rotball++;
-
-
 	//Reinicio de la Musica de Fondo
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{ 
-		//Fondo->stopAllSounds();
-		//Fondo->play2D("Musica/Fondo.mp3", true);
+		Fondo->stopAllSounds();
+		Fondo->play2D("Musica/Fondo.mp3", true);
 		Silbido->stopAllSounds();
 		Aguila->stopAllSounds();
 		Tiburon->stopAllSounds();
@@ -2018,6 +1996,9 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	//Inicio de la Animacion del Coche
 	if (key == GLFW_KEY_C && action == GLFW_PRESS)
 	{
+		Silbido->stopAllSounds();
+		Aguila->stopAllSounds();
+		Tiburon->stopAllSounds();
 		animacion_coche ^= true;
 	}
 
@@ -2026,7 +2007,7 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	{
 
 		Tiburon->stopAllSounds();
-		//Tiburon->play2D("Musica/Tiburon.mp3", true);
+		Tiburon->play2D("Musica/Tiburon.mp3", true);
 		Fondo->stopAllSounds();
 		Silbido->stopAllSounds();
 		Aguila->stopAllSounds();
@@ -2052,10 +2033,7 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	//Inicio de la animacion por KeyFrames del pelota
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{
-
-		//Tiburon->stopAllSounds();
-		//Tiburon->play2D("Musica/Tiburon.mp3", true);
-		Fondo->stopAllSounds();
+		Tiburon->stopAllSounds();
 		Silbido->stopAllSounds();
 		Aguila->stopAllSounds();
 
@@ -2080,6 +2058,10 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	//Inicio de la animacion por KeyFrames del Sube y Baja
 	if (key == GLFW_KEY_S && action == GLFW_PRESS)
 	{
+		Tiburon->stopAllSounds();
+		Silbido->stopAllSounds();
+		Aguila->stopAllSounds();
+
 		if (play4 == false && (FrameIndex4 > 1))
 		{
 			std::cout << "Play animation" << std::endl;
